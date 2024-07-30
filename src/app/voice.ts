@@ -1,6 +1,7 @@
 "use server"
 
 import { Message } from "@/types"
+import axios from "axios"
 
 import { callASR, callTTS } from "./gowajee"
 import { callOpenAI } from "./oai"
@@ -60,6 +61,13 @@ export const predictVoice = async (
       },
     }
   } catch (e: any) {
+    if (axios.isAxiosError(e)) {
+      return {
+        status: "error",
+        message: e.response?.data.message || e.cause?.message || e.message,
+      }
+    }
+
     return {
       status: "error",
       message: e.message || e,

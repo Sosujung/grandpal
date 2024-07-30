@@ -112,8 +112,6 @@ export const useVoice = () => {
       return
     }
 
-    console.log(resp)
-
     handlePlayAudio(new Uint8Array(resp.audio).buffer)
 
     set((s) => ({
