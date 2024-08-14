@@ -11,11 +11,11 @@ export const callASR = async (audioData: string): Promise<string> => {
     {
       headers: {
         "Content-type": "application/json",
-        "x-api-key": env.GOWAJEE_API_KEY,
+        "x-api-key": env.ASR_API_KEY,
       },
     }
   )
-  return (resp.data.results || []).reduce(
+  return (resp.data.output.results || []).reduce(
     (prev: string, cur: any) => prev + cur.transcript,
     ""
   )
@@ -29,7 +29,7 @@ export const callTTS = async (text: string) => {
       responseType: "arraybuffer",
       headers: {
         "Content-type": "application/json",
-        "x-api-key": env.GOWAJEE_API_KEY,
+        "x-api-key": env.TTS_API_KEY,
       },
     }
   )
