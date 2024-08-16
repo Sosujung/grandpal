@@ -45,6 +45,7 @@ const MainVAD = ({ className }: { className?: string }) => {
     setVoice,
     handleStopAudio,
     responseSoundLevel,
+    messages,
   } = useVoice()
   const { toggle, listening, userSpeaking } = useVAD({
     submitUserSpeechOnPause: true,
@@ -81,6 +82,11 @@ const MainVAD = ({ className }: { className?: string }) => {
         />
       </div>
       <div className="flex-1" />
+      {isPlayingAudio && (
+        <div className="max-h-40 overflow-y-auto text-sm">
+          {_.last(messages)?.content}
+        </div>
+      )}
       <div className={cn("mb-10 flex w-full items-center gap-1 rounded-md")}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

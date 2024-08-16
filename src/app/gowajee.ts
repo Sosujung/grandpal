@@ -27,12 +27,42 @@ export const callTTS = async (text: string, oai?: string | null) => {
     const openai = new OpenAI({
       apiKey: env.OAI_TTS_API_KEY,
     })
-    const resp = await openai.audio.speech.create({
-      model: "tts-1",
-      voice: oai as any,
-      input: text,
+    const resp = await openai.audio.speech.create(
+      {
+        model: "tts-1",
+        voice: oai as any,
+        input: text,
+      },
+      {
+        stream: true,
+      }
+    )
+
+    const data = await new Promise<Buffer>((resolve, reject) => {
+      let bufferStore = Buffer.from([])
+      const stream = resp.body as unknown as NodeJS.ReadableStream
+
+      if (!stream) {
+        reject("No stream")
+        return
+      }
+
+      stream.on("data", (chunk) => {
+        console.log("buffer", chunk.length)
+        bufferStore = Buffer.concat([bufferStore, chunk])
+      })
+
+      stream.on("end", () => {
+        resolve(bufferStore)
+      })
+
+      stream.on("error", (err) => {
+        reject(err)
+      })
     })
-    return resp.arrayBuffer()
+
+    return data
+    //return resp.arrayBuffer()
   }
 
   const resp = await axios.post(

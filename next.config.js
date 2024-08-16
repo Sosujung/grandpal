@@ -4,6 +4,9 @@ const CopyPlugin = require("copy-webpack-plugin")
 const nextConfig = {
   experimental: {
     optimizeCss: true,
+    serverActions: {
+      bodySizeLimit: "5mb",
+    },
   },
   webpack: (config, {}) => {
     config.plugins.push(
