@@ -28,7 +28,8 @@ export type PredictVoiceResponse =
 
 export const predictVoice = async (
   messages: Message[],
-  audioData: string
+  audioData: string,
+  ttsOAI: string | null = null
 ): Promise<PredictVoiceResponse> => {
   try {
     const t1 = performance.now()
@@ -47,7 +48,7 @@ export const predictVoice = async (
     ])
 
     const t3 = performance.now()
-    const newAudio = (await callTTS(respMessage)) as ArrayBuffer
+    const newAudio = (await callTTS(respMessage, ttsOAI)) as ArrayBuffer
 
     return {
       status: "success",

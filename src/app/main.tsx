@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { utils } from "@ricky0123/vad-react"
+import _ from "lodash"
 import { MessageCircle, MessageCircleOff, Mic, MicOff } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -32,6 +33,9 @@ const MainVAD = ({ className }: { className?: string }) => {
   const { soundLevel } = useSoundmeter({ stream })
   const [isResponding, setIsResponding] = useState(false)
   const [canInterupt, setCanInterupt] = useState(true)
+  const [ttsOAI, setTtsOAI] = useState<
+    null | "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer"
+  >("fable")
 
   const {
     predict,
@@ -54,7 +58,9 @@ const MainVAD = ({ className }: { className?: string }) => {
     onSpeechEnd: (audio) => {
       const wavBuffer = utils.encodeWAV(audio)
       const base64 = utils.arrayBufferToBase64(wavBuffer)
-      predict(base64)
+      predict(base64, {
+        ttsOAI,
+      })
     },
   })
 
@@ -100,7 +106,7 @@ const MainVAD = ({ className }: { className?: string }) => {
         <div className="flex-1" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <S className="size-6" />
+            <MessageCircle className="size-6" />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Interrupt</DropdownMenuLabel>
@@ -114,6 +120,39 @@ const MainVAD = ({ className }: { className?: string }) => {
                 Disallow
               </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Text-to-Speech</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuRadioGroup
+              value={ttsOAI ? "true" : "false"}
+              onValueChange={(v) => setTtsOAI(v === "true" ? "alloy" : null)}
+            >
+              <DropdownMenuRadioItem value="false">
+                Gowajee
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="true">
+                Open AI
+              </DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+            {ttsOAI && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Voice</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup
+                  value={ttsOAI}
+                  onValueChange={(v) => setTtsOAI(v as any)}
+                >
+                  {["alloy", "echo", "fable", "onyx", "nova", "shimmer"].map(
+                    (v) => (
+                      <DropdownMenuRadioItem key={v} value={v}>
+                        {_.startCase(v)}
+                      </DropdownMenuRadioItem>
+                    )
+                  )}
+                </DropdownMenuRadioGroup>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

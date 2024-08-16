@@ -81,7 +81,12 @@ export const useVoice = () => {
     }
   }
 
-  const predict = async (audio?: string) => {
+  const predict = async (
+    audio?: string,
+    options?: {
+      ttsOAI?: string | null
+    }
+  ) => {
     if (!audio) {
       return
     }
@@ -93,7 +98,7 @@ export const useVoice = () => {
       isLoading: true,
     })
 
-    const resp = await predictVoice(get().messages, audio)
+    const resp = await predictVoice(get().messages, audio, options?.ttsOAI)
 
     if (resp.status === "empty") {
       set({

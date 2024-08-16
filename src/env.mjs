@@ -10,6 +10,7 @@ export const env = createEnv({
     OPENAI_URL: z.string().url(),
     TTS_URL: z.string().url(),
     TTS_API_KEY: z.string().min(1),
+    OAI_TTS_API_KEY: z.string().min(1),
     ASR_URL: z.string().url(),
     ASR_API_KEY: z.string().min(1),
   },
@@ -21,5 +22,6 @@ export const env = createEnv({
     TTS_API_KEY: process.env.TTS_API_KEY,
     ASR_URL: process.env.ASR_URL,
     ASR_API_KEY: process.env.ASR_API_KEY,
+    OAI_TTS_API_KEY: process.env.OAI_TTS_API_KEY,
   },
 })
