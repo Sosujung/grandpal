@@ -112,6 +112,7 @@ export const useVoice = () => {
       return
     }
 
+    console.log("Performance", resp.performance)
     handlePlayAudio(new Uint8Array(resp.audio).buffer)
 
     set((s) => ({
