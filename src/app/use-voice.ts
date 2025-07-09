@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import { create } from "zustand"
 
 import { predictVoice, predictVoiceNoTTS } from "./voice"
+import { callOpenAI } from "./oai"
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -145,6 +146,16 @@ export const useVoice = () => {
     //}
   }
 
+  const greeting = async (options?: {
+    ttsOAI?: string | null
+  }) => {
+    // ai speak
+    const respMessage = await callGreeting()
+    handleStreamAudio(
+      `/api/tts?voice=${options?.ttsOAI}&input=${resp.message}`
+    )
+  }
+
   const predict = async (
     audio?: string,
     options?: {
@@ -230,6 +241,7 @@ export const useVoice = () => {
         ],
       }))
       console.log("Performance", resp.performance)
+      console.log('resp.message', resp.message)
       handleStreamAudio(
         `/api/tts?voice=${options.ttsOAI}&input=${resp.message}`
       )
