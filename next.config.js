@@ -14,11 +14,11 @@ const nextConfig = {
         patterns: [
           {
             from: "./node_modules/onnxruntime-web/dist/ort-wasm.wasm",
-            to: "static/chunks/app",
+            to: process.env.NODE_ENV === "production" ?  "static/chunks" :  "static/chunks/app",
           },
           {
             from: "./node_modules/onnxruntime-web/dist/ort-wasm-simd.wasm",
-            to: "static/chunks/app",
+            to: process.env.NODE_ENV === "production" ?  "static/chunks" :  "static/chunks/app",
           },
         ],
       })
