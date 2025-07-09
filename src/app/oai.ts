@@ -17,7 +17,7 @@ export const callOpenAI = async (messages: Message[]): Promise<string> => {
     env.OPENAI_URL,
     {
       messages: openAIMessages,
-      model: "typhoon-instruct",
+      model: "typhoon-v2.1-12b-instruct",
       // max_tokens: 256,
       // temperature: 0.1,
       // top_p: 0.95,
