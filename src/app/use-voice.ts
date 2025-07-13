@@ -6,7 +6,7 @@ import { toast } from "sonner"
 import { create } from "zustand"
 
 import { predictVoice, predictVoiceNoTTS } from "./voice"
-import { callOpenAI } from "./oai"
+import { callOpenAI, callGreeting } from "./oai"
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -149,10 +149,10 @@ export const useVoice = () => {
   const greeting = async (options?: {
     ttsOAI?: string | null
   }) => {
-    // ai speak
+    // ai speak - get random greeting
     const respMessage = await callGreeting()
     handleStreamAudio(
-      `/api/tts?voice=${options?.ttsOAI}&input=${resp.message}`
+      `/api/tts?voice=${options?.ttsOAI}&input=${respMessage}`
     )
   }
 
@@ -255,6 +255,7 @@ export const useVoice = () => {
   return {
     isLoading,
     predict,
+    greeting,
     messages,
     isPlayingAudio,
     handleStopAudio,

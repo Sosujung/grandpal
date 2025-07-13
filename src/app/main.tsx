@@ -39,6 +39,7 @@ const MainVAD = ({ className }: { className?: string }) => {
 
   const {
     predict,
+    greeting,
     isLoading,
     isPlayingAudio,
     getVoice,
@@ -80,6 +81,12 @@ const MainVAD = ({ className }: { className?: string }) => {
           isResponding={isPlayingAudio}
           onClick={toggle}
         />
+        <button
+          onClick={() => greeting({ ttsOAI })}
+          className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+        >
+          Start Greeting
+        </button>
       </div>
       <div className="flex-1" />
       {isPlayingAudio && (

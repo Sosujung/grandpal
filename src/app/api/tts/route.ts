@@ -17,8 +17,8 @@ export async function GET(req: NextRequest) {
   })
 
   const response = await openai.audio.speech.create({
-    model: "tts-1",
-    voice: (voice as any) || "alloy",
+    model: "gpt-4o-mini-tts",
+    voice: (voice as any) || "nova",
     input: input,
     response_format: "mp3",
     speed: 1,
