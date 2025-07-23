@@ -5,6 +5,6 @@ export default defineConfig({
   out: "./drizzle",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.POSTGRES_URL || "postgresql://localhost:5432/grandpal",
+    url: process.env.POSTGRES_URL || "postgresql://user:password@localhost:5432/grandpal",
   },
 });

@@ -2,10 +2,18 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
 
-// Use a local Postgres database for development or production
-const connectionString = process.env.POSTGRES_URL || "postgresql://localhost:5432/grandpal";
+// Create connection only when POSTGRES_URL is available
+const connectionString = process.env.POSTGRES_URL || "";
 
-const client = postgres(connectionString);
-export const db = drizzle(client, { schema });
+let db: ReturnType<typeof drizzle>;
 
+if (connectionString) {
+  const client = postgres(connectionString);
+  db = drizzle(client, { schema });
+} else {
+  // During build time, create a mock db object to prevent errors
+  db = {} as ReturnType<typeof drizzle>;
+}
+
+export { db };
 export * from "./schema";
