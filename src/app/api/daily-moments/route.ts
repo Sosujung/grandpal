@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, dailyMoments } from "@/lib/db";
 import { eq } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   try {
+    const { db, dailyMoments } = await import("@/lib/db");
     const { searchParams } = new URL(request.url);
     const date = searchParams.get("date");
 
@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const { db, dailyMoments } = await import("@/lib/db");
     const body = await request.json();
     const { name, date, moments, mood } = body;
 
@@ -68,6 +69,7 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    const { db, dailyMoments } = await import("@/lib/db");
     const body = await request.json();
     const { id, name, date, moments, mood } = body;
 
@@ -105,6 +107,7 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const { db, dailyMoments } = await import("@/lib/db");
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
