@@ -1,15 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
+
+// Temporary in-memory storage for development
+let mockData: any[] = [
+  {
+    id: "1",
+    name: "ยาย",
+    date: new Date(Date.now() - 86400000).toDateString(),
+    moments: ["หลานโทรมาคุย", "อาหารอร่อย", "นอนหลับสบาย"],
+    mood: "peaceful",
+    recorded: true,
+    createdAt: new Date(Date.now() - 86400000).toISOString(),
+    updatedAt: new Date(Date.now() - 86400000).toISOString()
+  },
+  {
+    id: "2",
+    name: "ปู่", 
+    date: new Date(Date.now() - 172800000).toDateString(),
+    moments: ["เพื่อนมาเยี่ยม", "สุขภาพดี", "อากาศดี"],
+    mood: "happy",
+    recorded: true,
+    createdAt: new Date(Date.now() - 172800000).toISOString(),
+    updatedAt: new Date(Date.now() - 172800000).toISOString()
+  }
+];
 
 export async function GET(request: NextRequest) {
   try {
-    const { db, dailyMoments } = await import("@/lib/db");
     const { searchParams } = new URL(request.url);
     const date = searchParams.get("date");
 
     if (date) {
       // Get all moments for specific date
-      const moments = await db.select().from(dailyMoments).where(eq(dailyMoments.date, date));
+      const moments = mockData.filter(item => item.date === date);
       if (moments.length > 0) {
         return NextResponse.json(moments);
       } else {
@@ -17,8 +39,7 @@ export async function GET(request: NextRequest) {
       }
     } else {
       // Get all moments
-      const moments = await db.select().from(dailyMoments);
-      return NextResponse.json(moments);
+      return NextResponse.json(mockData);
     }
   } catch (error) {
     console.error("Error fetching daily moments:", error);
@@ -28,7 +49,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { db, dailyMoments } = await import("@/lib/db");
     const body = await request.json();
     const { name, date, moments, mood } = body;
 
@@ -54,11 +74,11 @@ export async function POST(request: NextRequest) {
       moments: filteredMoments,
       mood: mood || "happy",
       recorded: true,
-      createdAt: now,
-      updatedAt: now
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString()
     };
 
-    await db.insert(dailyMoments).values(newMoment);
+    mockData.push(newMoment);
 
     return NextResponse.json(newMoment, { status: 201 });
   } catch (error) {
@@ -69,7 +89,6 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const { db, dailyMoments } = await import("@/lib/db");
     const body = await request.json();
     const { id, name, date, moments, mood } = body;
 
@@ -79,26 +98,26 @@ export async function PUT(request: NextRequest) {
       }, { status: 400 });
     }
 
-    const existingMoments = await db.select().from(dailyMoments).where(eq(dailyMoments.id, id));
-    const existingMoment = existingMoments[0];
-    if (!existingMoment) {
+    const existingIndex = mockData.findIndex(item => item.id === id);
+    if (existingIndex === -1) {
       return NextResponse.json({ 
         error: "No moments found for this ID" 
       }, { status: 404 });
     }
 
     // Update the existing moment
+    const existingMoment = mockData[existingIndex];
     const updateData = {
+      ...existingMoment,
       name: name || existingMoment.name,
       moments: moments ? moments.filter((m: string) => m && m.trim()) : existingMoment.moments,
       mood: mood || existingMoment.mood,
-      updatedAt: new Date()
+      updatedAt: new Date().toISOString()
     };
 
-    await db.update(dailyMoments).set(updateData).where(eq(dailyMoments.id, id));
+    mockData[existingIndex] = updateData;
 
-    const updatedMoment = { ...existingMoment, ...updateData };
-    return NextResponse.json(updatedMoment);
+    return NextResponse.json(updateData);
   } catch (error) {
     console.error("Error updating daily moment:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -107,7 +126,6 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const { db, dailyMoments } = await import("@/lib/db");
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
@@ -117,15 +135,14 @@ export async function DELETE(request: NextRequest) {
       }, { status: 400 });
     }
 
-    const existingMoments = await db.select().from(dailyMoments).where(eq(dailyMoments.id, id));
-    const existingMoment = existingMoments[0];
-    if (!existingMoment) {
+    const existingIndex = mockData.findIndex(item => item.id === id);
+    if (existingIndex === -1) {
       return NextResponse.json({ 
         error: "No moments found for this ID" 
       }, { status: 404 });
     }
 
-    await db.delete(dailyMoments).where(eq(dailyMoments.id, id));
+    mockData.splice(existingIndex, 1);
 
     return NextResponse.json({ message: "Daily moments deleted successfully" });
   } catch (error) {
