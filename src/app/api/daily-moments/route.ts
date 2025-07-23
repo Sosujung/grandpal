@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 
     if (date) {
       // Get all moments for specific date
-      const moments = await db.select().from(dailyMoments).where(eq(dailyMoments.date, date)).all();
+      const moments = await db.select().from(dailyMoments).where(eq(dailyMoments.date, date));
       if (moments.length > 0) {
         return NextResponse.json(moments);
       } else {
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
       }
     } else {
       // Get all moments
-      const moments = await db.select().from(dailyMoments).all();
+      const moments = await db.select().from(dailyMoments);
       return NextResponse.json(moments);
     }
   } catch (error) {
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
       updatedAt: now
     };
 
-    await db.insert(dailyMoments).values(newMoment).run();
+    await db.insert(dailyMoments).values(newMoment);
 
     return NextResponse.json(newMoment, { status: 201 });
   } catch (error) {
@@ -77,7 +77,8 @@ export async function PUT(request: NextRequest) {
       }, { status: 400 });
     }
 
-    const existingMoment = await db.select().from(dailyMoments).where(eq(dailyMoments.id, id)).get();
+    const existingMoments = await db.select().from(dailyMoments).where(eq(dailyMoments.id, id));
+    const existingMoment = existingMoments[0];
     if (!existingMoment) {
       return NextResponse.json({ 
         error: "No moments found for this ID" 
@@ -92,7 +93,7 @@ export async function PUT(request: NextRequest) {
       updatedAt: new Date()
     };
 
-    await db.update(dailyMoments).set(updateData).where(eq(dailyMoments.id, id)).run();
+    await db.update(dailyMoments).set(updateData).where(eq(dailyMoments.id, id));
 
     const updatedMoment = { ...existingMoment, ...updateData };
     return NextResponse.json(updatedMoment);
@@ -113,14 +114,15 @@ export async function DELETE(request: NextRequest) {
       }, { status: 400 });
     }
 
-    const existingMoment = await db.select().from(dailyMoments).where(eq(dailyMoments.id, id)).get();
+    const existingMoments = await db.select().from(dailyMoments).where(eq(dailyMoments.id, id));
+    const existingMoment = existingMoments[0];
     if (!existingMoment) {
       return NextResponse.json({ 
         error: "No moments found for this ID" 
       }, { status: 404 });
     }
 
-    await db.delete(dailyMoments).where(eq(dailyMoments.id, id)).run();
+    await db.delete(dailyMoments).where(eq(dailyMoments.id, id));
 
     return NextResponse.json({ message: "Daily moments deleted successfully" });
   } catch (error) {

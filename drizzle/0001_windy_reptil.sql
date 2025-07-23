@@ -1,1 +1,0 @@
-ALTER TABLE `daily_moments` ADD `name` text NOT NULL;

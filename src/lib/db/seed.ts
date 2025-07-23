@@ -6,6 +6,7 @@ async function seed() {
   const sampleData = [
     {
       id: "1",
+      name: "ยาย",
       date: new Date(Date.now() - 86400000).toDateString(),
       moments: ["หลานโทรมาคุย", "อาหารอร่อย", "นอนหลับสบาย"],
       mood: "peaceful",
@@ -14,7 +15,8 @@ async function seed() {
       updatedAt: new Date(Date.now() - 86400000)
     },
     {
-      id: "2", 
+      id: "2",
+      name: "ปู่", 
       date: new Date(Date.now() - 172800000).toDateString(),
       moments: ["เพื่อนมาเยี่ยม", "สุขภาพดี", "อากาศดี"],
       mood: "happy",
@@ -25,7 +27,7 @@ async function seed() {
   ];
 
   for (const data of sampleData) {
-    await db.insert(dailyMoments).values(data).onConflictDoNothing().run();
+    await db.insert(dailyMoments).values(data).onConflictDoNothing();
   }
   
   console.log("Database seeded successfully!");
